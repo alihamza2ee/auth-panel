@@ -8,7 +8,7 @@
 define('DB_HOST', getenv('MYSQLHOST') ?: 'mysql.railway.internal');
 define('DB_USER', getenv('MYSQLUSER') ?: 'root');
 define('DB_PASS', getenv('MYSQLPASSWORD') ?: '');
-define('DB_NAME', getenv('MYSQLDATABASE') ?: 'railway');
+define('DB_NAME', getenv('MYSQL_DATABASE') ?: 'railway');
 define('DB_PORT', getenv('MYSQLPORT') ?: 3306);
 
 // Admin credentials
@@ -30,16 +30,23 @@ function getDB() {
     static $conn = null;
     
     if ($conn === null) {
-        $conn = new mysqli(DB_HOST, DB_USER, DB_PASS, DB_NAME, DB_PORT);
-        
-        if ($conn->connect_error) {
+        try {
+            $conn = new mysqli(DB_HOST, DB_USER, DB_PASS, DB_NAME, DB_PORT);
+            
+            if ($conn->connect_error) {
+                die(json_encode([
+                    'success' => false,
+                    'message' => 'Database connection failed: ' . $conn->connect_error
+                ]));
+            }
+            
+            $conn->set_charset("utf8mb4");
+        } catch (Exception $e) {
             die(json_encode([
                 'success' => false,
-                'message' => 'Database connection failed: ' . $conn->connect_error
+                'message' => 'Database error: ' . $e->getMessage()
             ]));
         }
-        
-        $conn->set_charset("utf8mb4");
     }
     
     return $conn;
@@ -76,9 +83,11 @@ function logActivity($action, $details = '', $username = 'system') {
     $ip = $_SERVER['REMOTE_ADDR'];
     
     $stmt = $db->prepare("INSERT INTO activity_logs (username, action, details, ip_address) VALUES (?, ?, ?, ?)");
-    $stmt->bind_param("ssss", $username, $action, $details, $ip);
-    $stmt->execute();
-    $stmt->close();
+    if ($stmt) {
+        $stmt->bind_param("ssss", $username, $action, $details, $ip);
+        $stmt->execute();
+        $stmt->close();
+    }
 }
 
 // Check if key is in valid time range
