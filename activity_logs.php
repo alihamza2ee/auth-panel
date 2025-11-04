@@ -3,7 +3,7 @@ require_once 'advanced_config.php';
 if (!isLoggedIn()) { header('Location: advanced_index.php'); exit(); }
 
 $db = getDB();
-$logs = $db->query("SELECT * FROM activity_logs ORDER BY timestamp DESC LIMIT 200")->fetch_all(MYSQLI_ASSOC);
+$logs = $db->query("SELECT * FROM activity_logs ORDER BY created_at DESC LIMIT 200")->fetch_all(MYSQLI_ASSOC);
 ?>
 <!DOCTYPE html>
 <html>
@@ -71,7 +71,7 @@ $logs = $db->query("SELECT * FROM activity_logs ORDER BY timestamp DESC LIMIT 20
                 <tbody>
                     <?php foreach ($logs as $log): ?>
                     <tr>
-                        <td><?php echo $log['timestamp']; ?></td>
+                        <td><?php echo $log['created_at']; ?></td>
                         <td><?php echo htmlspecialchars($log['username']); ?></td>
                         <td><?php echo htmlspecialchars($log['action']); ?></td>
                         <td><?php echo htmlspecialchars($log['details']); ?></td>

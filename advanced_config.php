@@ -1,31 +1,34 @@
 <?php
 /**
- * Railway.app Configuration
- * Replace your old advanced_config.php with this file
+ * Advanced Configuration File - RAILWAY VERSION
+ * =============================================
  */
 
-// Railway MySQL environment variables
+// ============== RAILWAY DATABASE CONFIGURATION ==============
 define('DB_HOST', getenv('MYSQLHOST') ?: 'mysql.railway.internal');
 define('DB_USER', getenv('MYSQLUSER') ?: 'root');
 define('DB_PASS', getenv('MYSQLPASSWORD') ?: '');
 define('DB_NAME', getenv('MYSQL_DATABASE') ?: 'railway');
 define('DB_PORT', getenv('MYSQLPORT') ?: 3306);
+// ===========================================================
 
-// Admin credentials
+// ============== ADMIN CONFIGURATION ==============
 define('ADMIN_USER', 'admin');
 define('ADMIN_PASS', 'AliHamza@2025');
+// =================================================
 
-// Bot version control
+// ============== BOT VERSION CONTROL ==============
 define('REQUIRED_BOT_VERSION', '5.0.0');
 define('FORCE_UPDATE', false);
-define('UPDATE_URL', '');
+define('UPDATE_URL', 'https://yourwebsite.com/bot_update.zip');
+// =================================================
 
-// Security settings
+// ============== SECURITY SETTINGS ==============
 define('ENABLE_HARDWARE_LOCK', true);
 define('ENABLE_IP_LOGGING', true);
 define('MAX_LOGIN_ATTEMPTS', 5);
+// ==============================================
 
-// Database connection
 function getDB() {
     static $conn = null;
     
@@ -52,17 +55,14 @@ function getDB() {
     return $conn;
 }
 
-// Generate unique user ID
 function generateUserId() {
     return strtoupper(substr(md5(uniqid(rand(), true)), 0, 8));
 }
 
-// Generate username with pattern
 function generateUsername($prefix, $number, $digits = 4) {
     return $prefix . str_pad($number, $digits, '0', STR_PAD_LEFT);
 }
 
-// Generate random password
 function generatePassword($length = 12) {
     $chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*';
     $password = '';
@@ -72,12 +72,10 @@ function generatePassword($length = 12) {
     return $password;
 }
 
-// Check authentication
 function isLoggedIn() {
     return isset($_SESSION['admin_logged_in']) && $_SESSION['admin_logged_in'] === true;
 }
 
-// Log activity
 function logActivity($action, $details = '', $username = 'system') {
     $db = getDB();
     $ip = $_SERVER['REMOTE_ADDR'];
@@ -90,7 +88,6 @@ function logActivity($action, $details = '', $username = 'system') {
     }
 }
 
-// Check if key is in valid time range
 function isKeyTimeValid($start_date, $end_date) {
     $now = time();
     $start = strtotime($start_date);
@@ -107,7 +104,15 @@ function isKeyTimeValid($start_date, $end_date) {
     return ['valid' => true];
 }
 
-// Start session
+function getHardwareFingerprint($device_id, $additional_data = []) {
+    $data = [
+        'device_id' => $device_id,
+        'user_agent' => $_SERVER['HTTP_USER_AGENT'] ?? '',
+        'additional' => $additional_data
+    ];
+    return hash('sha256', json_encode($data));
+}
+
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
