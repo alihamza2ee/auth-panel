@@ -133,10 +133,10 @@ $total_logins = $db->query("SELECT COUNT(*) as c FROM login_logs")->fetch_assoc(
 $hardware_locked = $db->query("SELECT COUNT(*) as c FROM users WHERE hwid IS NOT NULL")->fetch_assoc()['c'];
 
 // Get recent users
-$users = $db->query("SELECT * FROM users ORDER BY created_date DESC LIMIT 50")->fetch_all(MYSQLI_ASSOC);
+$users = $db->query("SELECT * FROM users ORDER BY created_at DESC LIMIT 50")->fetch_all(MYSQLI_ASSOC);
 
 // Get recent activity
-$activities = $db->query("SELECT * FROM activity_logs ORDER BY timestamp DESC LIMIT 20")->fetch_all(MYSQLI_ASSOC);
+$activities = $db->query("SELECT * FROM activity_logs ORDER BY created_at DESC LIMIT 20")->fetch_all(MYSQLI_ASSOC);
 ?>
 <!DOCTYPE html>
 <html>
@@ -391,7 +391,7 @@ $activities = $db->query("SELECT * FROM activity_logs ORDER BY timestamp DESC LI
                                 - <?php echo htmlspecialchars($activity['details']); ?>
                             <?php endif; ?>
                         </div>
-                        <div class="activity-time"><?php echo $activity['timestamp']; ?></div>
+                        <div class="activity-time"><?php echo $activity['created_at']; ?></div>
                     </div>
                     <?php endforeach; ?>
                 </div>
