@@ -366,7 +366,7 @@ $activities = $db->query("SELECT * FROM activity_logs ORDER BY created_at DESC L
                                         <?php echo $user['expire_date'] ?: 'N/A'; ?>
                                     <?php endif; ?>
                                 </td>
-                                <td><?php echo $user['hardware_id'] ? '🔒 Locked' : '🔓 Free'; ?></td>
+                                <td><?php echo (isset($user['hardware_id']) && $user['hardware_id']) ? '🔒 Locked' : '🔓 Free'; ?></td>
                                 <td>
                                     <a href="edit_user.php?user=<?php echo urlencode($user['username']); ?>" style="color: #0088ff;">Edit</a>
                                     |
