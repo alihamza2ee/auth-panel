@@ -35,7 +35,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['generate_bulk'])) {
             $user_id = generateUserId();
             $password = $auto_password ? generatePassword() : $custom_password;
             
-            $stmt = $db->prepare("INSERT INTO users (username, user_id, password, status, start_date, end_date, permissions) VALUES (?, ?, ?, 'active', ?, ?, 'basic')");
+            $stmt = $db->prepare("INSERT INTO users (username, user_id, password, status, start_date, end_date) VALUES (?, ?, ?, 'active', ?, ?)");
             $stmt->bind_param("sssss", $username, $user_id, $password, $start_date, $end_date);
             
             if ($stmt->execute()) {
