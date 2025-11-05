@@ -23,11 +23,11 @@
 
 // Get Railway MySQL credentials from environment variables
 // Railway automatically sets these
-$DB_HOST = $_ENV['MYSQLHOST'] ?? getenv('MYSQLHOST') ?? 'mysql.railway.internal';
-$DB_PORT = $_ENV['MYSQLPORT'] ?? getenv('MYSQLPORT') ?? '3306';
-$DB_USER = $_ENV['MYSQLUSER'] ?? getenv('MYSQLUSER') ?? 'root';
-$DB_PASS = $_ENV['MYSQLPASSWORD'] ?? getenv('MYSQLPASSWORD') ?? '';
-$DB_NAME = $_ENV['MYSQLDATABASE'] ?? getenv('MYSQLDATABASE') ?? 'railway';
+$DB_HOST = $_ENV['mysql.railway.internal'] ?? getenv('MYSQLHOST') ?? 'mysql.railway.internal';
+$DB_PORT = $_ENV['3306'] ?? getenv('MYSQLPORT') ?? '3306';
+$DB_USER = $_ENV['root'] ?? getenv('MYSQLUSER') ?? 'root';
+$DB_PASS = $_ENV['iDFjnbMKzOTFBuwlZjZgzKiEBBAJDBmD'] ?? getenv('iDFjnbMKzOTFBuwlZjZgzKiEBBAJDBmD') ?? '';
+$DB_NAME = $_ENV['railway'] ?? getenv('railway') ?? 'railway';
 
 // Security password
 define('FIX_PASSWORD', 'fixnow123');  // ← Change this if you want
