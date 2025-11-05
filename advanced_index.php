@@ -138,7 +138,7 @@ if ($table_check && $table_check->num_rows > 0) {
     $total_logins = 0;
 }
 
-$hardware_locked = $db->query("SELECT COUNT(*) as c FROM users WHERE hwid IS NOT NULL")->fetch_assoc()['c'];
+$hardware_locked = $db->query("SELECT COUNT(*) as c FROM users WHERE hardware_id IS NOT NULL")->fetch_assoc()['c'];
 
 // Get recent users
 $users = $db->query("SELECT * FROM users ORDER BY created_at DESC LIMIT 50")->fetch_all(MYSQLI_ASSOC);
