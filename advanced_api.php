@@ -1,8 +1,9 @@
 <?php
 /**
- * ADVANCED API - USERNAME ONLY CHECK
- * ===================================
- * Password is ignored - only username matters
+ * ADVANCED AUTHENTICATION API - Railway Panel
+ * ============================================
+ * VERSION: 2.0 - Username Only Authentication
+ * Password checking DISABLED - Username is the key
  */
 
 header('Content-Type: application/json');
@@ -10,6 +11,7 @@ header('Access-Control-Allow-Origin: *');
 header('Access-Control-Allow-Methods: POST, GET, OPTIONS');
 header('Access-Control-Allow-Headers: Content-Type');
 
+// Handle preflight
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
     http_response_code(200);
     exit();
@@ -27,13 +29,13 @@ $action = $data['action'] ?? '';
 // ============================================
 if ($action === 'login') {
     $username = $data['username'] ?? '';
-    $password = $data['password'] ?? '';  // IGNORED
+    $password = $data['password'] ?? '';  // IGNORED - NOT CHECKED
     $device_id = $data['device_id'] ?? '';
     $hardware_id = $data['hardware_id'] ?? '';
     $version = $data['version'] ?? '';
     
-    // Log for debugging
-    logActivity('login_attempt', "Username: $username", $username);
+    // Log activity
+    logActivity('login_attempt', "User: $username", $username);
     
     if (empty($username)) {
         echo json_encode([
@@ -46,7 +48,7 @@ if ($action === 'login') {
     
     $db = getDB();
     
-    // CHECK ONLY USERNAME - PASSWORD IGNORED
+    // Get user by USERNAME ONLY - PASSWORD NOT CHECKED
     $stmt = $db->prepare("SELECT * FROM users WHERE username = ?");
     $stmt->bind_param("s", $username);
     $stmt->execute();
@@ -74,7 +76,7 @@ if ($action === 'login') {
         exit();
     }
     
-    // Check dates
+    // Check date range
     $current_date = date('Y-m-d');
     $start_date = $user['start_date'];
     $end_date = $user['end_date'];
@@ -99,7 +101,7 @@ if ($action === 'login') {
         exit();
     }
     
-    // Hardware lock check (if enabled)
+    // Hardware lock check
     if (ENABLE_HARDWARE_LOCK && !empty($user['hardware_id'])) {
         if ($user['hardware_id'] !== $hardware_id) {
             echo json_encode([
@@ -125,8 +127,8 @@ if ($action === 'login') {
     $stmt->bind_param("ss", $ip_address, $username);
     $stmt->execute();
     
-    // Log successful login
-    logActivity('login_success', "IP: $ip_address", $username);
+    // Log success
+    logActivity('login_success', "IP: $ip_address, Device: $device_id", $username);
     
     // SUCCESS - PASSWORD WAS IGNORED
     echo json_encode([
@@ -141,7 +143,7 @@ if ($action === 'login') {
         'status' => 'active',
         'hardware_locked' => !empty($user['hardware_id']),
         'permissions' => ['basic'],
-        'message' => 'Authentication successful (password ignored)'
+        'message' => 'Authentication successful'
     ]);
     exit();
 }
@@ -173,7 +175,7 @@ if ($action === 'check_version') {
     $needs_update = version_compare($current_version, $required_version, '<');
     
     if ($needs_update && $force_update) {
-        // FORCE UPDATE REQUIRED
+        // FORCE UPDATE
         echo json_encode([
             'force_update' => true,
             'update_required' => true,
