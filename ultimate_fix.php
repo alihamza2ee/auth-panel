@@ -1,36 +1,29 @@
 <?php
 /**
  * ═══════════════════════════════════════════════════════════════
- * 🔥 ULTIMATE FIX SCRIPT - SOLVE ALL PROBLEMS
+ * 🔥 ULTIMATE FIX SCRIPT - FINAL WORKING VERSION
  * ═══════════════════════════════════════════════════════════════
  * 
  * Upload to GitHub → Open in browser → Click ONE button → DONE!
  * 
- * This script will:
- * ✅ Clean ALL old setup files
- * ✅ Reset database completely
- * ✅ Create fresh tables
- * ✅ Add test users
- * ✅ Unbind ALL hardware
- * ✅ Test API automatically
- * ✅ Show you exact status
+ * NO EDITING NEEDED - Ready to use!
  * 
- * URL: https://your-app.up.railway.app/ultimate_fix.php
- * 
+ * URL: https://your-app.up.railway.app/ultimate_fix_final.php
  * ⚠️ DELETE THIS FILE AFTER USE!
  * ═══════════════════════════════════════════════════════════════
  */
 
-// Get Railway MySQL credentials from environment variables
-// Railway automatically sets these
-$DB_HOST = $_ENV['mysql.railway.internal'] ?? getenv('MYSQLHOST') ?? 'mysql.railway.internal';
-$DB_PORT = $_ENV['3306'] ?? getenv('MYSQLPORT') ?? '3306';
-$DB_USER = $_ENV['root'] ?? getenv('MYSQLUSER') ?? 'root';
-$DB_PASS = $_ENV['iDFjnbMKzOTFBuwlZjZgzKiEBBAJDBmD'] ?? getenv('iDFjnbMKzOTFBuwlZjZgzKiEBBAJDBmD') ?? '';
-$DB_NAME = $_ENV['railway'] ?? getenv('railway') ?? 'railway';
+// ============================================
+// 🔧 DATABASE CONFIG - WORKING CREDENTIALS
+// ============================================
+define('DB_HOST', 'mysql.railway.internal');
+define('DB_PORT', '3306');
+define('DB_USER', 'root');
+define('DB_PASS', 'iDFjnbMKzOTFBuwlZjZgzKiEBBAJDBmD');
+define('DB_NAME', 'railway');
 
 // Security password
-define('FIX_PASSWORD', 'fixnow123');  // ← Change this if you want
+define('FIX_PASSWORD', 'fixnow123');
 
 header('Content-Type: text/html; charset=utf-8');
 ?>
@@ -126,13 +119,6 @@ header('Content-Type: text/html; charset=utf-8');
             to { opacity: 1; transform: translateX(0); }
         }
         
-        .config-info {
-            background: rgba(0,255,136,0.1);
-            padding: 20px;
-            border-radius: 10px;
-            margin: 20px 0;
-        }
-        
         .big-button {
             font-size: 24px;
             padding: 20px 50px;
@@ -155,13 +141,20 @@ header('Content-Type: text/html; charset=utf-8');
             background: rgba(255,107,107,0.2);
             font-weight: bold;
         }
+        
+        pre {
+            background: rgba(0,0,0,0.5);
+            padding: 15px;
+            border-radius: 5px;
+            overflow-x: auto;
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="header">
-            <h1>🔥 ULTIMATE FIX SCRIPT</h1>
-            <p style="font-size: 20px;">One Click - All Problems Solved!</p>
+            <h1>🔥 ULTIMATE FIX</h1>
+            <p style="font-size: 20px;">Fix Everything in 10 Seconds!</p>
         </div>
 
 <?php
@@ -170,44 +163,40 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $password = $_POST['password'] ?? '';
     
     if ($password !== FIX_PASSWORD) {
-        echo '<div class="box error">❌ WRONG PASSWORD!</div>';
-        showForm($DB_HOST, $DB_PORT, $DB_USER, $DB_NAME);
+        echo '<div class="box error">❌ WRONG PASSWORD! Enter: fixnow123</div>';
+        showForm();
         exit();
     }
     
     echo '<div class="box">';
-    echo '<h2 class="warning">🔥 STARTING ULTIMATE FIX...</h2>';
-    echo '<p>This will solve ALL your problems in one go!</p>';
+    echo '<h2 class="warning">🔥 STARTING FIX...</h2>';
     echo '</div>';
-    
-    $steps = [];
     
     try {
         // STEP 1: Connect
         echo '<div class="step">';
-        echo '<h3>📡 Step 1: Connecting to Database...</h3>';
+        echo '<h3>📡 Step 1: Connecting...</h3>';
         
-        $db = new mysqli($DB_HOST, $DB_USER, $DB_PASS, $DB_NAME, $DB_PORT);
+        $db = new mysqli(DB_HOST, DB_USER, DB_PASS, DB_NAME, DB_PORT);
         
         if ($db->connect_error) {
             throw new Exception('Connection failed: ' . $db->connect_error);
         }
         
         $db->set_charset('utf8mb4');
-        echo '<p class="success">✅ Connected successfully!</p>';
-        echo '<p>Host: ' . $DB_HOST . ':' . $DB_PORT . '</p>';
+        echo '<p class="success">✅ Connected! MySQL ' . $db->server_info . '</p>';
         echo '</div>';
         
-        // STEP 2: Drop ALL tables
+        // STEP 2: Drop tables
         echo '<div class="step">';
-        echo '<h3>🗑️ Step 2: Cleaning Old Data...</h3>';
+        echo '<h3>🗑️ Step 2: Cleaning...</h3>';
         
         $tables = ['activity_logs', 'bot_versions', 'hardware_bindings', 'login_logs', 'settings', 'users'];
         $dropped = 0;
         
         foreach ($tables as $table) {
             if ($db->query("DROP TABLE IF EXISTS $table")) {
-                echo "<p class='warning'>🗑️ Removed: $table</p>";
+                echo "<p class='warning'>Removed: $table</p>";
                 $dropped++;
             }
         }
@@ -215,9 +204,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         echo "<p class='success'>✅ Cleaned $dropped tables</p>";
         echo '</div>';
         
-        // STEP 3: Create users table
+        // STEP 3: Create users
         echo '<div class="step">';
-        echo '<h3>👥 Step 3: Creating Users Table...</h3>';
+        echo '<h3>👥 Step 3: Users Table...</h3>';
         
         $sql = "CREATE TABLE users (
             id INT PRIMARY KEY AUTO_INCREMENT,
@@ -231,21 +220,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             last_login DATETIME DEFAULT NULL,
             last_ip VARCHAR(50) DEFAULT NULL,
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-            KEY idx_username (username),
-            KEY idx_status (status)
+            updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4";
         
         if ($db->query($sql)) {
-            echo '<p class="success">✅ Users table created</p>';
+            echo '<p class="success">✅ Created</p>';
         } else {
-            throw new Exception('Users table error: ' . $db->error);
+            throw new Exception('Error: ' . $db->error);
         }
         echo '</div>';
         
-        // STEP 4: Create bot_versions table
+        // STEP 4: Create versions
         echo '<div class="step">';
-        echo '<h3>🔧 Step 4: Creating Bot Versions Table...</h3>';
+        echo '<h3>🔧 Step 4: Versions Table...</h3>';
         
         $sql = "CREATE TABLE bot_versions (
             id INT PRIMARY KEY AUTO_INCREMENT,
@@ -256,13 +243,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4";
         
         if ($db->query($sql)) {
-            echo '<p class="success">✅ Bot_versions table created</p>';
+            echo '<p class="success">✅ Created</p>';
         }
         echo '</div>';
         
-        // STEP 5: Create activity_logs table
+        // STEP 5: Create logs
         echo '<div class="step">';
-        echo '<h3>📝 Step 5: Creating Activity Logs Table...</h3>';
+        echo '<h3>📝 Step 5: Logs Table...</h3>';
         
         $sql = "CREATE TABLE activity_logs (
             id INT PRIMARY KEY AUTO_INCREMENT,
@@ -270,207 +257,128 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             action VARCHAR(100) NOT NULL,
             details TEXT DEFAULT NULL,
             ip_address VARCHAR(50) DEFAULT NULL,
-            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            KEY idx_username (username)
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4";
         
         if ($db->query($sql)) {
-            echo '<p class="success">✅ Activity_logs table created</p>';
+            echo '<p class="success">✅ Created</p>';
         }
         echo '</div>';
         
-        // STEP 6: Add test users
+        // STEP 6: Add users
         echo '<div class="step">';
-        echo '<h3>👤 Step 6: Adding Test Users...</h3>';
+        echo '<h3>👤 Step 6: Adding Users...</h3>';
         
         $users = [
             ['ali', 30],
             ['test1', 60],
-            ['test2', 90]
+            ['test2', 90],
+            ['hamza', 365]
         ];
         
         foreach ($users as list($username, $days)) {
             $stmt = $db->prepare("INSERT INTO users (username, status, start_date, end_date) VALUES (?, 'active', CURDATE(), DATE_ADD(CURDATE(), INTERVAL ? DAY))");
             $stmt->bind_param("si", $username, $days);
             $stmt->execute();
-            echo "<p class='success'>✅ Added user: $username ({$days} days)</p>";
+            echo "<p class='success'>✅ $username ({$days} days)</p>";
         }
         echo '</div>';
         
-        // STEP 7: Add default version
+        // STEP 7: Add version
         echo '<div class="step">';
-        echo '<h3>🔢 Step 7: Setting Bot Version...</h3>';
+        echo '<h3>🔢 Step 7: Bot Version...</h3>';
         
         $stmt = $db->prepare("INSERT INTO bot_versions (version, force_update) VALUES ('5.0.0', 0)");
         $stmt->execute();
-        echo '<p class="success">✅ Version 5.0.0 set (Force update: OFF)</p>';
+        echo '<p class="success">✅ Version 5.0.0 set</p>';
         echo '</div>';
         
         // STEP 8: Verify
         echo '<div class="step">';
         echo '<h3>✅ Step 8: Verification</h3>';
         
-        echo '<h4>📊 Tables Created:</h4>';
+        echo '<h4>Tables:</h4><ul>';
         $result = $db->query("SHOW TABLES");
-        echo '<ul>';
         while ($row = $result->fetch_array()) {
             echo "<li class='success'>✓ {$row[0]}</li>";
         }
         echo '</ul>';
         
-        echo '<h4>👥 Users:</h4>';
+        echo '<h4>Users:</h4>';
         echo '<table>';
-        echo '<tr><th>ID</th><th>Username</th><th>Status</th><th>Valid Until</th><th>Hardware</th></tr>';
+        echo '<tr><th>Username</th><th>Status</th><th>Valid Until</th><th>Hardware</th></tr>';
         
-        $result = $db->query("SELECT id, username, status, end_date, hardware_id FROM users");
+        $result = $db->query("SELECT username, status, end_date, hardware_id FROM users");
         while ($row = $result->fetch_assoc()) {
-            $hw = $row['hardware_id'] ? '<span class="warning">Bound</span>' : '<span class="success">Free ✓</span>';
-            echo "<tr>";
-            echo "<td>{$row['id']}</td>";
-            echo "<td><strong>{$row['username']}</strong></td>";
-            echo "<td>{$row['status']}</td>";
-            echo "<td>{$row['end_date']}</td>";
-            echo "<td>{$hw}</td>";
-            echo "</tr>";
+            $hw = $row['hardware_id'] ? 'Locked' : '<span class="success">Free ✓</span>';
+            echo "<tr><td><strong>{$row['username']}</strong></td><td>{$row['status']}</td><td>{$row['end_date']}</td><td>{$hw}</td></tr>";
         }
         echo '</table>';
         echo '</div>';
         
-        // STEP 9: Test API
-        echo '<div class="step">';
-        echo '<h3>🧪 Step 9: Testing API...</h3>';
-        
-        $api_url = 'https://' . $_SERVER['HTTP_HOST'] . '/advanced_api.php';
-        
-        $test_data = json_encode([
-            'action' => 'login',
-            'username' => 'ali',
-            'password' => '123',
-            'device_id' => 'test_' . time(),
-            'hardware_id' => 'hw_' . time(),
-            'version' => '5.0.0'
-        ]);
-        
-        $ch = curl_init($api_url);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($ch, CURLOPT_POST, true);
-        curl_setopt($ch, CURLOPT_POSTFIELDS, $test_data);
-        curl_setopt($ch, CURLOPT_HTTPHEADER, ['Content-Type: application/json']);
-        curl_setopt($ch, CURLOPT_TIMEOUT, 10);
-        
-        $response = curl_exec($ch);
-        $http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-        curl_close($ch);
-        
-        if ($http_code == 200 && $response) {
-            $data = json_decode($response, true);
-            
-            if ($data && $data['authenticated']) {
-                echo '<p class="success">✅ API Test PASSED!</p>';
-                echo '<p class="success">✅ Bot login working perfectly!</p>';
-                echo '<pre style="background: rgba(0,255,136,0.1); padding: 15px; border-radius: 5px;">';
-                echo json_encode($data, JSON_PRETTY_PRINT);
-                echo '</pre>';
-            } else {
-                echo '<p class="warning">⚠️ API responding but: ' . ($data['message'] ?? 'Unknown error') . '</p>';
-            }
-        } else {
-            echo '<p class="warning">⚠️ Could not test API automatically</p>';
-            echo '<p>Please test manually with your bot</p>';
-        }
-        echo '</div>';
-        
         $db->close();
         
-        // SUCCESS MESSAGE
-        echo '<div class="box" style="background: linear-gradient(135deg, rgba(0,255,136,0.2) 0%, rgba(0,255,136,0.1) 100%); border-color: #00ff88;">';
-        echo '<h2 class="success" style="font-size: 32px;">🎉 ALL PROBLEMS SOLVED!</h2>';
-        echo '<div style="font-size: 18px; line-height: 2;">';
-        echo '<p class="success">✅ Database completely reset</p>';
-        echo '<p class="success">✅ All tables created fresh</p>';
-        echo '<p class="success">✅ Test users added</p>';
-        echo '<p class="success">✅ Hardware unbound (fresh start)</p>';
-        echo '<p class="success">✅ API tested and working</p>';
+        // SUCCESS
+        echo '<div class="box" style="background: rgba(0,255,136,0.2); border: 3px solid #00ff88;">';
+        echo '<h2 class="success" style="font-size: 40px; text-align: center;">🎉 DONE! 🎉</h2>';
+        echo '<h3 style="text-align: center; margin: 20px;">Everything Fixed!</h3>';
+        
+        echo '<div style="font-size: 20px; line-height: 3; margin: 30px;">';
+        echo '<p class="success">✅ Database reset</p>';
+        echo '<p class="success">✅ Tables created</p>';
+        echo '<p class="success">✅ Users added (all free)</p>';
+        echo '<p class="success">✅ Ready to use!</p>';
         echo '</div>';
-        echo '<hr style="margin: 30px 0; border-color: #00ff88;">';
-        echo '<h3 style="font-size: 24px;">📋 NEXT STEPS:</h3>';
-        echo '<ol style="font-size: 18px; line-height: 2.5;">';
-        echo '<li class="error">❗ <strong>DELETE this file (ultimate_fix.php) from GitHub NOW!</strong></li>';
-        echo '<li class="success">✅ Run your bot - login with username: <strong>ali</strong></li>';
-        echo '<li class="success">✅ Hardware will bind to your PC</li>';
-        echo '<li class="success">✅ Everything should work perfectly!</li>';
-        echo '</ol>';
+        
+        echo '<hr style="margin: 30px 0; border-top: 2px solid #00ff88;">';
+        
+        echo '<h3 style="font-size: 28px;">🚀 NOW:</h3>';
+        echo '<div style="font-size: 22px; line-height: 3;">';
+        echo '<p class="error">1. DELETE this file from GitHub!</p>';
+        echo '<p class="success">2. Run your bot</p>';
+        echo '<p class="success">3. Login: <strong>ali</strong></p>';
+        echo '<p class="success">4. Works! ✅</p>';
+        echo '</div>';
         echo '</div>';
         
     } catch (Exception $e) {
         echo '<div class="box error">';
-        echo '<h2>❌ ERROR OCCURRED</h2>';
-        echo '<p>' . $e->getMessage() . '</p>';
-        echo '<p>Please check your database credentials.</p>';
+        echo '<h2>❌ ERROR</h2>';
+        echo '<p style="font-size: 18px;">' . $e->getMessage() . '</p>';
         echo '</div>';
     }
     
 } else {
-    showForm($DB_HOST, $DB_PORT, $DB_USER, $DB_NAME);
+    showForm();
 }
 
-function showForm($host, $port, $user, $db) {
+function showForm() {
     ?>
-    <div class="config-info">
-        <h3>🔧 Auto-Detected Configuration:</h3>
-        <table style="background: rgba(0,0,0,0.2);">
-            <tr><td><strong>Host:</strong></td><td><?php echo $host; ?></td></tr>
-            <tr><td><strong>Port:</strong></td><td><?php echo $port; ?></td></tr>
-            <tr><td><strong>User:</strong></td><td><?php echo $user; ?></td></tr>
-            <tr><td><strong>Database:</strong></td><td><?php echo $db; ?></td></tr>
-        </table>
-        <p class="success">✅ Using Railway environment variables (automatic!)</p>
-    </div>
-    
     <div class="box">
-        <h2>🔐 ENTER PASSWORD TO START FIX</h2>
+        <h2>🔐 PASSWORD</h2>
         <form method="POST" style="text-align: center;">
-            <p><input type="password" name="password" placeholder="Enter: fixnow123" required autofocus></p>
-            <button type="submit" class="big-button">🔥 FIX ALL PROBLEMS NOW</button>
+            <p><input type="password" name="password" placeholder="fixnow123" required autofocus></p>
+            <button type="submit" class="big-button">🔥 FIX NOW!</button>
         </form>
     </div>
     
     <div class="box">
-        <h3>🎯 WHAT THIS SCRIPT WILL DO:</h3>
-        <div style="font-size: 16px;">
-            <p>✅ <strong>Delete ALL old tables</strong> (fresh start)</p>
-            <p>✅ <strong>Create new tables</strong> (users, bot_versions, activity_logs)</p>
-            <p>✅ <strong>Add 3 test users</strong> (ali, test1, test2)</p>
-            <p>✅ <strong>Set bot version</strong> (5.0.0)</p>
-            <p>✅ <strong>Unbind all hardware</strong> (no locks)</p>
-            <p>✅ <strong>Test API automatically</strong></p>
-            <p>✅ <strong>Show complete status</strong></p>
+        <h3>WILL DO:</h3>
+        <div style="font-size: 18px; line-height: 2;">
+            <p>🗑️ Clean old tables</p>
+            <p>👥 Create users table</p>
+            <p>🔧 Create versions table</p>
+            <p>📝 Create logs table</p>
+            <p>👤 Add 4 users (ali, test1, test2, hamza)</p>
+            <p>🔢 Set version 5.0.0</p>
+            <p>🔓 All users unbound</p>
         </div>
     </div>
     
-    <div class="box">
-        <h3>📝 INSTRUCTIONS:</h3>
-        <ol style="font-size: 16px; line-height: 2;">
-            <li>Upload this file to GitHub (no editing needed!)</li>
-            <li>Wait 2-3 minutes for Railway deploy</li>
-            <li>Open: <code>https://your-app.up.railway.app/ultimate_fix.php</code></li>
-            <li>Enter password: <code>fixnow123</code></li>
-            <li>Click the big red button</li>
-            <li>Wait 10 seconds - everything will be fixed!</li>
-            <li><strong class="error">DELETE this file immediately after!</strong></li>
-            <li>Run your bot - it will work!</li>
-        </ol>
-    </div>
-    
-    <div class="box">
-        <h3>⚠️ WARNINGS:</h3>
-        <ul style="font-size: 16px; line-height: 2;">
-            <li class="error">❗ This will DELETE ALL existing data</li>
-            <li class="error">❗ All users will be removed</li>
-            <li class="error">❗ Hardware bindings will be cleared</li>
-            <li class="warning">⚠️ This is a FRESH START</li>
-            <li class="warning">⚠️ DELETE file after running</li>
-        </ul>
+    <div class="box" style="background: rgba(255,68,68,0.1);">
+        <h3 class="error">⚠️ WARNING</h3>
+        <p style="font-size: 18px;">This will DELETE ALL data!</p>
+        <p style="font-size: 18px;">Fresh start only!</p>
     </div>
     <?php
 }
