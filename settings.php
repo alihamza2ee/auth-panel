@@ -10,7 +10,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $force = isset($_POST['force_update']) ? 1 : 0;
         $url = trim($_POST['download_url']);
         
-        $stmt = $db->prepare("INSERT INTO bot_versions (version, required, force_update, download_url) VALUES (?, 1, ?, ?)");
+        $stmt = $db->prepare("INSERT INTO bot_versions (version, force_update, download_url) VALUES (?, ?, ?)");
         $stmt->bind_param("sis", $version, $force, $url);
         $stmt->execute();
         

@@ -5,13 +5,12 @@ if (!isLoggedIn()) { header('Location: advanced_index.php'); exit(); }
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $username = trim($_POST['username']);
     $password = trim($_POST['password']);
-    $user_id = generateUserId();
     $start_date = $_POST['start_date'];
     $end_date = $_POST['end_date'];
     
     $db = getDB();
-    $stmt = $db->prepare("INSERT INTO users (username, user_id, password, status, start_date, end_date) VALUES (?, ?, ?, 'active', ?, ?)");
-    $stmt->bind_param("sssss", $username, $user_id, $password, $start_date, $end_date);
+    $stmt = $db->prepare("INSERT INTO users (username, password, status, start_date, end_date) VALUES (?, ?, 'active', ?, ?)");
+    $stmt->bind_param("ssss", $username, $password, $start_date, $end_date);
     
     if ($stmt->execute()) {
         logActivity('user_created', "Created user: $username", ADMIN_USER);
