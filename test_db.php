@@ -11,10 +11,10 @@ header('Content-Type: text/html; charset=utf-8');
 // ============================================
 // DATABASE CONFIG - EDIT THESE!
 // ============================================
-define('DB_HOST', 'autorack.proxy.rlwy.net');
-define('DB_PORT', '12345');  // ← CHANGE THIS
+define('DB_HOST', 'mysql.railway.internal');
+define('DB_PORT', '3306');  // ← CHANGE THIS
 define('DB_USER', 'root');
-define('DB_PASS', 'YOUR_PASSWORD');  // ← CHANGE THIS
+define('DB_PASS', 'iDFjnbMKzOTFBuwlZjZgzKiEBBAJDBmD');  // ← CHANGE THIS
 define('DB_NAME', 'railway');
 
 ?>
